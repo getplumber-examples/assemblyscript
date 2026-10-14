@@ -23,6 +23,8 @@ jobs:
         else
           printf "\nOK: Distributions files have not been modified.\n";
         fi
+    permissions:
+      contents: read
   compiler:
     name: "Compiler (${{ matrix.os }}, node ${{ matrix.node_version }})"
     runs-on: ${{ matrix.os }}-latest
@@ -44,6 +46,8 @@ jobs:
       run: npm run check
     - name: Test
       run: npm test
+    permissions:
+      contents: read
   bootstrap:
     name: "Bootstrap (${{ matrix.target }})"
     runs-on: ubuntu-latest
@@ -68,6 +72,8 @@ jobs:
       run: node bin/asc --config src/asconfig.json --target ${{ matrix.target == 'debug' && 'release' || 'debug' }}-bootstrap --wasm ./build/assemblyscript.${{ matrix.target }}-bootstrap.js
     - name: "Test ${{ matrix.target == 'debug' && 'release' || 'debug' }}"
       run: npm run test:compiler -- --wasm build/assemblyscript.${{ matrix.target == 'debug' && 'release' || 'debug' }}-bootstrap.js
+    permissions:
+      contents: read
   features:
     name: "Features"
     runs-on: ubuntu-latest
@@ -84,6 +90,8 @@ jobs:
         ASC_FEATURES: threads,reference-types,gc,exception-handling
       run: |
         npm run test:compiler features/threads features/reference-types features/gc features/exception-handling bindings/esm bindings/raw
+    permissions:
+      contents: read
   runtimes:
     name: "Runtimes"
     runs-on: ubuntu-latest
@@ -109,6 +117,8 @@ jobs:
         npm run build
         cd ..
         npm test stub
+    permissions:
+      contents: read
   loader:
     name: "Loader"
     runs-on: ubuntu-latest
@@ -127,6 +137,8 @@ jobs:
         cd lib/loader
         npm run asbuild
         npm run test
+    permissions:
+      contents: read
   coverage:
     name: "Coverage"
     runs-on: ubuntu-latest
@@ -144,3 +156,5 @@ jobs:
       run: npx c8 -r none -- npm test
     - name: Output coverage summary
       run: npx c8 report -r text-summary
+    permissions:
+      contents: read
